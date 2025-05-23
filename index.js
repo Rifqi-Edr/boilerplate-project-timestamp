@@ -4,6 +4,7 @@
 // init project
 var express = require('express');
 var app = express();
+const isInvalidDate = (date) => date.toUTCString() === "Invalid Date"
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -20,11 +21,18 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:date", function (req, res) {
+  let date = new Date(req.params.date);
+  
+  if (isInvalidDate(date)) {
+    date = new Date(+req.params.date)
+  };
+
+  res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
 });
-
-
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
